@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<TITLE>Manpage of TSKMOUNT</TITLE>
+</HEAD>
+<BODY>
+<H2>NAME</H2>
+
+tskmount - mounting the deleted files filesystem
+<H2>SYNOPSIS</H2>
+
+<P>
+<B>tskmount</B> [ <B>-h</B> ] [ <B>-f</B> ] [ <B>-d</B> ] [ <B>-q</B> ] [ <B>-v</B> ] <B>filesystem</B> <B>mountpoint</B>
+<P>
+<H2>DESCRIPTION</H2>
+
+<P>
+
+<B>tskmount</B>(8) is the command to mount the deleted files filesystem.
+<P>
+
+<B>tskmount</B>(8) is part of the TSKmount-Fuse package, a Fuse filesystem written in Perl and based on The Sleuth Kit tools (commands <B>fls</B>, <B>icat</B> and <B>ils</B> are required).
+<H2>OPTIONS</H2>
+
+<DL COMPACT>
+<DT><B>-h, --help</B><DD>
+Print a help message.
+<DT><B>-f, --full</B><DD>
+Show all files in the mounted filesystem (deleted and not deleted). Mounting with this option may takes a long time and requires some memory during filesystem analysis at initialization.
+<DT><B>-d, --deleted</B><DD>
+Show only the deleted files. This is the default.
+<DT><B>-q, --quiet</B><DD>
+Do not print status messages, at initialization.
+<DT><B>-v, --verbose</B><DD>
+Print status messages at initialization. &quot;Ready&quot; is printed when filesystem has been computed entirely and is ready to be run. This is the default.
+<DT><B>filesystem</B><DD>
+The device (e.g /dev/sda1) or the file (any image filesystem) to mount. It must be readable with user rights.
+<DT><B>mountpoint</B><DD>
+This is an empty directory (e.g /tmp/fuse/) where to mount the filesystem.
+</DL>
+<H2>EXAMPLES</H2>
+
+<P>
+
+Here is some commands examples.
+<H3>MOUNTING</H3>
+
+<P>
+
+Mounting device /dev/hda5 on /tmp/fuse empty directory:
+<P>
+<PRE>
+                    tskmount /dev/hda5 /tmp/fuse
+</PRE>
+
+<P>
+
+Wait the &quot;Ready&quot; message before going to the mountpoint /tmp/fuse.
+<H3>UNMOUNTING</H3>
+
+<P>
+
+Unmounting the filesystem:
+<P>
+<PRE>
+                    fusermount -u /tmp/fuse
+</PRE>
+
+<H3>A FULL EXAMPLE</H3>
+
+<P>
+
+Mounting device /dev/sda1 a USB pen device, to recover deleted file.
+<P>
+<PRE>
+                    su -c &quot;chmod o+r /dev/sda1&quot;      # make readable
+                    mkdir /tmp/fuse                  # create mountpoint
+                    tskmount /dev/sda1 /tmp/fuse &amp;   # wait &quot;Ready&quot;
+                    ls /tmp/fuse/                    # show content
+                    cp /tmp/fuse/... .               # copy your file
+                    fusermount -u /tmp/fuse          # unmount
+                    su -c &quot;chmod o-r /dev/sda1&quot;      # reset permissions
+</PRE>
+
+<H2>NOTES</H2>
+
+<P>
+
+Device or image file must be readable by the user, so you may have to do a <B>chmod</B> like &quot;chmod o+r device&quot; as root before if you intend to use tskmount with common user rights. And don't forget to &quot;chmod o-r device&quot; after unmounting :-)
+<P>
+
+Copying files is really slow and if size is more than 8 MB you shouldn't try to copy the file directly. Instead use the <B>icat</B> sleuthkit command like tskmount will show you in the alert message.
+<P>
+
+Command line <B>find</B> should be used with -noleaf option to work properly.
+<P>
+
+Mounted filesystem is readonly.
+<P>
+
+Don't expect miracle, only a small part of the files can be recovered. Generaly the more recent.
+<H2>BUGS</H2>
+
+<P>
+
+Let me know at <A HREF="http://tskmount-fuse.sourceforge.net/">http://tskmount-fuse.sourceforge.net/</A>.
+<H2>AUTHOR</H2>
+
+<P>
+
+Jean Diraison
+&lt;<A HREF="mailto:jean.diraison@ac-versailles.fr">jean.diraison@ac-versailles.fr</A>&gt;,
+&lt;<A HREF="mailto:jean.diraison@ac-rennes.fr">jean.diraison@ac-rennes.fr</A>&gt;
+<H2>AVAILABILITY</H2>
+
+<P>
+
+<B>tskmount</B>(8) is part of TSKmount-Fuse package, a Fuse filesystem written in perl and based on The Sleuth Kit tools. It is intended to provide an easy way to recover deleted files over ext2, vfat (FAT 12/16/32) and NTFS filesystems. Latest version can be downloaded at <A HREF="http://tskmount-fuse.sourceforge.net/">http://tskmount-fuse.sourceforge.net/</A>.
+<H2>COPYRIGHT</H2>
+
+<P>
+
+Copyright © 2007 Jean Diraison. There is NO warranty. You may redistribute this software under the terms of the GNU General Public License version 2. For more information about these matters, see the files named COPYING.
+<H2>SEE ALSO</H2>
+
+<P>
+
+<B>fusermount</B>(1),
+<B>icat</B>(1),
+<B>fls</B>(1).
+<P>
+
+</BODY>
+</HTML>

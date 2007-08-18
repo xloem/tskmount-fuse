@@ -89,7 +89,7 @@ $Id$
 				<term>mountpoint</term>
 				<listitem>
 					<para>
-						This is the empty directory where to mount the filesystem. (e.g /tmp/fuse/)
+						This is an empty directory (e.g /tmp/fuse/) where to mount the filesystem.
 					</para>
 				</listitem>
 			</varlistentry>

@@ -46,6 +46,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %changelog
 * Sun Aug 19 2007 Jean Diraison <jean.diraison@ac-versailles.fr>
+- add enhance option to improve deleted files search
 - improve inodes management
 - add option to pass arguments to Fuse
 - add some documentation (man, html, smgl)

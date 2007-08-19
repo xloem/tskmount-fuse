@@ -63,6 +63,9 @@ tskmount will show you in the alert message.
 
  - Mounted filesystem is readonly.
 
+ - Some filesystems (e.g ext2) need to be computed with -e, --enhance option
+to show all deleted files.
+
  - Don't expect miracle, only a small part of the files can be recovered.
 
 

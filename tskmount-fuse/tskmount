@@ -36,7 +36,7 @@ my $FREE_INODE_NUM = 1;
 my @files  = ();
 my %inodes = ();
 
-my ($option_full, $option_verbose, $option_help, $option_mountopts) = (0, 1, 0, "");
+my ($option_full, $option_enhance, $option_verbose, $option_help, $option_mountopts) = (0, 0, 1, 0, "");
 
 ########################################
 
@@ -211,6 +211,7 @@ sub init_ils {
 
 my $options = GetOptions("f|full" => \$option_full,
        			 "d|deleted" => sub { $option_full = 0 },
+			 "e|enhance" => \$option_enhance,
 			 "v|verbose+" => \$option_verbose,
 			 "q|quiet" => sub { $option_verbose = 0 },
 			 "o|options=s" => \$option_mountopts,
@@ -221,11 +222,12 @@ if ((@ARGV != 2) || ($option_help == 1)) {
 	my $progname = $0;
 	$progname =~ s=./==g;
 	print "A Fuse filesystem based on The Sleuth Kit (http://www.sleuthkit.org/)\n";
-	print "usage: $progname [-fdvqh] [-o fuseoptions] filesystem mountpoint\n";
+	print "usage: $progname [-fdevqh] [-o fuseoptions] filesystem mountpoint\n";
 	print "\t\tfilesystem      a readable device (/dev/hda1) or image file (fs.bin)\n";
 	print "\t\tmountpoint      an empty directory where to mount\n";
 	print "\t\t-f, --full      show all files (slow)\n";
 	print "\t\t-d, --deleted   show only deleted files (default)\n";
+	print "\t\t-e, --enhance   enhance deleted files search (default if -f option)\n";
 	print "\t\t-v, --verbose   print status messages (default)\n";
 	print "\t\t-q, --quiet     do not print status messages\n";
 	print "\t\t-o, --options   a list of options to pass to fuse (e.g -o allow_other)\n";
@@ -254,6 +256,7 @@ if ($option_full) {
 	init_ils();
 } else {
 	init_fls("-d");
+	init_ils()  if ($option_enhance);
 }
 
 print "Ready\n"  if ($option_verbose);

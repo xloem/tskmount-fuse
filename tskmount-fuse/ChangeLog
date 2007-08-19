@@ -1,4 +1,5 @@
 2007-08-19  Jean Diraison <jean.diraison@ac-versailles.fr>
+	* Add enhance option to improve deleted files search.
 	* Improve inodes management.
 	* Add option to pass arguments to Fuse.
 	* Add some documentation (man, html and sgml).

@@ -1,5 +1,6 @@
 #!/usr/bin/perl -w
 # tskmount, is a Fuse filesystem based on The Sleuth Kit tools
+# $Id$
 # Author:  Jean Diraison <jean.diraison@ac-versailles.fr>, <jean.diraison@ac-rennes.fr>
 # Date:    Mon, 13 Aug 2007 23:39:53 +0200
 # Version: 0.01
@@ -30,10 +31,12 @@ my $MIN_FILE_SIZE_ALERT = (1<<24);
 
 my $FILESYSTEM;
 
+my $FREE_INODE_NUM = 1;
+
 my @files  = ();
 my %inodes = ();
 
-my ($option_full, $option_deleted, $option_verbose, $option_quiet, $option_help) = (0, 1, 1, 0, 0);
+my ($option_full, $option_verbose, $option_help, $option_mountopts) = (0, 1, 0, "");
 
 ########################################
 
@@ -41,16 +44,12 @@ sub tskfs_getattr {
 	my $filename = $_[0];
 	if ( defined $inodes{$filename} ) {
 		my $inodef = $inodes{$filename};
-		$inodef =~ m/^(\d+)\|(.*)\|(\d+)\|([\d\-]+)\|(\d+)\|([dlbcp\-]\/[rwxstSTdlbcp\-]{10})\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|\d$/;
-		my ($unk1, $filename, $dev, $inode, $modenum, $mode, $nlink, $uid, $gid, $rdev, $size, $mtime, $atime, $ctime, $blocksize) = ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);
-		$inode =~ s/-//g;		# remove - if ntfs inode type
-		if ($inode == 0) {
-			$inode = 2;
-			$modenum = $FULL_FILE_FLAGS  if ($modenum == 0);
-		}
+		$inodef =~ m/^(\d+)\|(\d+)\|(.*)\|(\d+)\|([\d\-]+)\|(\d+)\|([dlbcp\-]\/[rwxstSTdlbcp\-]{10})\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|\d$/;
+		my ($inodenum, $unk1, $filename, $dev, $inode, $modenum, $mode, $nlink, $uid, $gid, $rdev, $size, $mtime, $atime, $ctime, $blocksize) = ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);
+		$modenum = $FULL_FILE_FLAGS  if ($modenum == 0);
 		$blocksize = $DEFAULT_BLOCKSIZE  if ($blocksize == 0);
 		my $numblocks = int(($size+$blocksize-1)/$blocksize);
-		return ($dev, $inode, $modenum, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blocksize, $numblocks);
+		return ($dev, $inodenum, $modenum, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blocksize, $numblocks);
 	} else {
 		return -ENOENT();
 	}
@@ -61,7 +60,7 @@ sub tskfs_getdir {
 	if ( defined $inodes{$dirname} ) {
 		my @dircontent = ();
 		my $inodef = $inodes{$dirname};
-		$inodef =~ m/^\d+\|.*\|\d+\|[\d\-]+\|(\d+)\|[dlbcp\-]\/[rwxstSTdlbcp\-]{10}\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d$/;
+		$inodef =~ m/^\d+\|\d+\|.*\|\d+\|[\d\-]+\|(\d+)\|[dlbcp\-]\/[rwxstSTdlbcp\-]{10}\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d$/;
 		my $modenum = $1;
 		if (! S_ISDIR($modenum) ) {
 			return -ENOTDIR();
@@ -85,7 +84,7 @@ sub tskfs_open {
 	my $openmode = $_[1] & (~0100000);
 	if ( defined $inodes{$filename} ) {
 		my $inodef = $inodes{$filename};
-		$inodef =~ m/^\d+\|.*\|\d+\|([\d\-]+)\|(\d+)\|[dlbcp\-]\/[rwxstSTdlbcp\-]{10}\|\d+\|\d+\|\d+\|\d+\|(\d+)\|\d+\|\d+\|\d+\|\d+\|\d$/;
+		$inodef =~ m/^\d+\|\d+\|.*\|\d+\|([\d\-]+)\|(\d+)\|[dlbcp\-]\/[rwxstSTdlbcp\-]{10}\|\d+\|\d+\|\d+\|\d+\|(\d+)\|\d+\|\d+\|\d+\|\d+\|\d$/;
 		my ($inode, $modenum, $size) = ($1, $2, $3);
 		if (S_ISREG($modenum) && ($openmode == O_RDONLY)) {
 			if (($option_verbose) && ($size > $MIN_FILE_SIZE_ALERT)) {
@@ -103,7 +102,7 @@ sub tskfs_read {
 	my ($filename, $count, $offset) = @_;
 	if ( defined $inodes{$filename} ) {
 		my $inodef = $inodes{$filename};
-		$inodef =~ m/^\d+\|.*\|\d+\|([\d\-]+)\|\d+\|[dlbcp\-]\/[rwxstSTdlbcp\-]{10}\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d$/;
+		$inodef =~ m/^\d+\|\d+\|.*\|\d+\|([\d\-]+)\|\d+\|[dlbcp\-]\/[rwxstSTdlbcp\-]{10}\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d+\|\d$/;
 		my $inode = $1;
 		my $ibs = 1;
 		for(my $i=9; $i<15; $i++) {
@@ -153,14 +152,14 @@ sub init_fls {
 			my $dirname = $filename;
 			while (($dirname =~ s=/[^/]+$==) && $dirname ne "") {
 				last  if ( defined $inodes{$dirname} );
-				$inodes{$dirname} = "0|".$dirname."|0|1|".$FULL_DIR_FLAGS."|d/drwxrwxrwx|2|0|0|0|0|0|0|0|".$DEFAULT_BLOCKSIZE."|0";
+				$inodes{$dirname} = ($FREE_INODE_NUM++)."|0|".$dirname."|0|1|".$FULL_DIR_FLAGS."|d/drwxrwxrwx|2|0|0|0|".$DEFAULT_BLOCKSIZE."|0|0|0|".$DEFAULT_BLOCKSIZE."|0";
 				push(@files, $dirname);
 				if ( ! defined $inodes{$dirname."/."} ) {
-					$inodes{$dirname."/."} = "0|".$dirname."/."."|0|1|".$FULL_DIR_FLAGS."|d/drwxrwxrwx|2|0|0|0|0|0|0|0|".$DEFAULT_BLOCKSIZE."|0";
+					$inodes{$dirname."/."} = ($FREE_INODE_NUM++)."|0|".$dirname."/."."|0|1|".$FULL_DIR_FLAGS."|d/drwxrwxrwx|2|0|0|0|".$DEFAULT_BLOCKSIZE."|0|0|0|".$DEFAULT_BLOCKSIZE."|0";
 					push(@files, $dirname."/.");
 				}
 				if ( ! defined $inodes{$dirname."/.."} ) {
-					$inodes{$dirname."/.."} = "0|".$dirname."/.."."|0|1|".$FULL_DIR_FLAGS."|d/drwxrwxrwx|2|0|0|0|0|0|0|0|".$DEFAULT_BLOCKSIZE."|0";
+					$inodes{$dirname."/.."} = ($FREE_INODE_NUM++)."|0|".$dirname."/.."."|0|1|".$FULL_DIR_FLAGS."|d/drwxrwxrwx|2|0|0|0|".$DEFAULT_BLOCKSIZE."|0|0|0|".$DEFAULT_BLOCKSIZE."|0";
 					push(@files, $dirname."/..");
 				}
 			}
@@ -168,21 +167,21 @@ sub init_fls {
 		while ( defined $inodes{$filename} ) {
 			$filename =~ s/\(deleted/(deleted_/  or  $filename =~ s/$/_/;
 		}
-		$inodes{$filename} = $item;
+		$inodes{$filename} = ($FREE_INODE_NUM++)."|".$item;
 		push(@files, $filename);
 	}
 	close(FLSDAT);
 	if ( ! defined $inodes{"/."} ) {
-		$inodes{"/."} = "0|/.|0|1|".$FULL_DIR_FLAGS."|d/drwxrwxrwx|2|0|0|0|0|0|0|0|".$DEFAULT_BLOCKSIZE."|0";
+		$inodes{"/."} = ($FREE_INODE_NUM++)."|0|/.|0|1|".$FULL_DIR_FLAGS."|d/drwxrwxrwx|2|0|0|0|".$DEFAULT_BLOCKSIZE."|0|0|0|".$DEFAULT_BLOCKSIZE."|0";
 		push(@files, "/.");
 	}
 	if ( ! defined $inodes{"/.."} ) {
-		$inodes{"/."} = "0|/..|0|1|".$FULL_DIR_FLAGS."|d/drwxrwxrwx|2|0|0|0|0|0|0|0|".$DEFAULT_BLOCKSIZE."|0";
+		$inodes{"/."} = ($FREE_INODE_NUM++)."|0|/..|0|1|".$FULL_DIR_FLAGS."|d/drwxrwxrwx|2|0|0|0|".$DEFAULT_BLOCKSIZE."|0|0|0|".$DEFAULT_BLOCKSIZE."|0";
 		push(@files, "/..");
 	}
 	my $root = $inodes{"/."};
 	$root =~ s/\.//;
-	$inodes{"/"} = $root;
+	$inodes{"/"} = ($FREE_INODE_NUM++)."|".$root;
 	push(@files, "/");
 }
 
@@ -201,7 +200,7 @@ sub init_ils {
 			$gid = 0  if ($gid < 0);
 			my $filename = "/(deleted_$inode)";
 			my $entry = "0|$filename|0|$inode|$modenum|-/-rwxrwxrwx|$nlink|$uid|$gid|0|$size|$mtime|$atime|$ctime|".$DEFAULT_BLOCKSIZE."|0";
-			$inodes{$filename} = $entry;
+			$inodes{$filename} = ($FREE_INODE_NUM++)."|".$entry;
 			push(@files, $filename);
 		}
 	}
@@ -211,25 +210,25 @@ sub init_ils {
 ########################################
 
 my $options = GetOptions("f|full" => \$option_full,
-       			 "d|deleted" => \$option_deleted,
-			 "q|quiet" => \$option_quiet,
-			 "v|verbose" => \$option_verbose,
+       			 "d|deleted" => sub { $option_full = 0 },
+			 "v|verbose+" => \$option_verbose,
+			 "q|quiet" => sub { $option_verbose = 0 },
+			 "o|options=s" => \$option_mountopts,
 			 "h|help" => \$option_help);
 
-$option_deleted = !$option_full;
-$option_verbose = !$option_quiet;
 
 if ((@ARGV != 2) || ($option_help == 1)) {
 	my $progname = $0;
 	$progname =~ s=./==g;
 	print "A Fuse filesystem based on The Sleuth Kit (http://www.sleuthkit.org/)\n";
-	print "usage: $progname [-fdvqh] filesystem mountpoint\n";
+	print "usage: $progname [-fdvqh] [-o fuseoptions] filesystem mountpoint\n";
 	print "\t\tfilesystem      a readable device (/dev/hda1) or image file (fs.bin)\n";
 	print "\t\tmountpoint      an empty directory where to mount\n";
 	print "\t\t-f, --full      show all files (slow)\n";
 	print "\t\t-d, --deleted   show only deleted files (default)\n";
 	print "\t\t-v, --verbose   print status messages (default)\n";
 	print "\t\t-q, --quiet     do not print status messages\n";
+	print "\t\t-o, --options   a list of options to pass to fuse (e.g -o allow_other)\n";
 	print "\t\t-h, --help      print this help message\n";
 	print "to unmount filesystem, use:  fusermount -u mountpoint\n";
 	exit(0);
@@ -250,15 +249,15 @@ if ( ! -d "$mountpoint" ) {
 
 print "Building filesystem... "  if ($option_verbose);
 
-if ($option_deleted) {
-	init_fls("-d");
-} else {
+if ($option_full) {
 	init_fls();
 	init_ils();
+} else {
+	init_fls("-d");
 }
 
 print "Ready\n"  if ($option_verbose);
 
-Fuse::main(mountpoint=>$mountpoint, getattr=>\&tskfs_getattr, getdir=>\&tskfs_getdir, open=>\&tskfs_open, read=>\&tskfs_read);
+Fuse::main(mountpoint=>$mountpoint, mountopts=>$option_mountopts, getattr=>\&tskfs_getattr, getdir=>\&tskfs_getdir, open=>\&tskfs_open, read=>\&tskfs_read);
 
 

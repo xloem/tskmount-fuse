@@ -21,8 +21,9 @@ $Id$
 			<arg choice="opt">-d</arg>
 			<arg choice="opt">-q</arg>
 			<arg choice="opt">-v</arg>
-			<arg choice="req">filesystem</arg>
-			<arg choice="req">mountpoint</arg>
+			<arg choice="opt">-o <replaceable>fuseoptions</replaceable></arg>
+			<arg choice="req"><replaceable>filesystem</replaceable></arg>
+			<arg choice="req"><replaceable>mountpoint</replaceable></arg>
 		</cmdsynopsis>
 	</refsynopsisdiv>
 	<refsect1>
@@ -78,7 +79,15 @@ $Id$
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>filesystem</term>
+				<term>-o <replaceable>fuseoptions</replaceable>, --options=<replaceable>fuseoptions</replaceable></term>
+				<listitem>
+					<para>
+						The argument <replaceable>fuseoptions</replaceable> is a list of comma separated options to pass to fuse (e.g "-o allow_other" to allow access to others).
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><replaceable>filesystem</replaceable></term>
 				<listitem>
 					<para>
 						The device (e.g /dev/sda1) or the file (any image filesystem) to mount. It must be readable with user rights.
@@ -86,10 +95,10 @@ $Id$
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>mountpoint</term>
+				<term><replaceable>mountpoint</replaceable></term>
 				<listitem>
 					<para>
-						This is an empty directory (e.g /tmp/fuse/) where to mount the filesystem.
+						The <replaceable>mountpoint</replaceable> is an empty directory (e.g /tmp/fuse/) where to mount the filesystem.
 					</para>
 				</listitem>
 			</varlistentry>
@@ -106,7 +115,7 @@ $Id$
 				Mounting device /dev/hda5 on /tmp/fuse empty directory:
 			</para>
 			<programlisting>
-				tskmount /dev/hda5 /tmp/fuse
+		tskmount /dev/hda5 /tmp/fuse
 			</programlisting>
 			<para>
 				Wait the "Ready" message before going to the mountpoint /tmp/fuse.
@@ -118,7 +127,7 @@ $Id$
 				Unmounting the filesystem:
 			</para>
 			<programlisting>
-				fusermount -u /tmp/fuse
+		fusermount -u /tmp/fuse
 			</programlisting>
 		</example>
 		<example>
@@ -127,23 +136,35 @@ $Id$
 				Mounting device /dev/sda1 a USB pen device, to recover deleted file.
 			</para>
 			<programlisting>
-				su -c "chmod o+r /dev/sda1"      # make readable
-				mkdir /tmp/fuse                  # create mountpoint
-				tskmount /dev/sda1 /tmp/fuse &   # wait "Ready"
-				ls /tmp/fuse/                    # show content
-				cp /tmp/fuse/... .               # copy your file
-				fusermount -u /tmp/fuse          # unmount
-				su -c "chmod o-r /dev/sda1"      # reset permissions
+		su -c "chmod o+r /dev/sda1"      # make readable
+		mkdir /tmp/fuse                  # create mountpoint
+		tskmount /dev/sda1 /tmp/fuse &   # wait "Ready"
+		ls /tmp/fuse/                    # show content
+		cp /tmp/fuse/... .               # copy your file
+		fusermount -u /tmp/fuse          # unmount
+		su -c "chmod o-r /dev/sda1"      # reset permissions
+			</programlisting>
+		</example>
+		<example>
+			<title>COPY A LARGE FILE</title>
+			<para>
+				Copy a large file named "/tmp/fuse/foo (deleted_12345)" using <command>icat</command>(1) command from The Sleuth Kit package.
+			</para>
+			<programlisting>
+	# at the end of the filename you can get the real inode to use
+	# as last argument of icat command
+
+		icat -r /dev/sda1 12345 >/tmp/foo_recovery
 			</programlisting>
 		</example>
 	</refsect1>
 	<refsect1>
 		<title>NOTES</title>
 		<para>
-			Device or image file must be readable by the user, so you may have to do a <command>chmod</command> like "chmod o+r device" as root before if you intend to use tskmount with common user rights. And don't forget to "chmod o-r device" after unmounting :-)
+			Device or image file must be readable by the user, so you may have to do a <command>chmod</command>(1) like "chmod o+r device" as root before if you intend to use tskmount with common user rights. And don't forget to "chmod o-r device" after unmounting :-)
 		</para>
 		<para>
-			Copying files is really slow and if size is more than 8 MB you shouldn't try to copy the file directly. Instead use the <command>icat</command> sleuthkit command like tskmount will show you in the alert message.
+			Copying files is really slow and if size is more than 8 MB you shouldn't try to copy the file directly. Instead use the <command>icat</command>(1) sleuthkit command like tskmount will show you in the alert message.
 		</para>
 		<para>
 			Command line <command>find</command> should be used with -noleaf option to work properly.

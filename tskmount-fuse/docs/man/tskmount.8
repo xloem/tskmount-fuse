@@ -3,13 +3,13 @@
 .\" <http://shell.ipoline.com/~elmert/comp/docbook2X/> 
 .\" Please send any bug reports, improvements, comments, patches, 
 .\" etc. to Steve Cheng <steve@ggi-project.org>.
-.TH "TSKMOUNT" "8" "18 août 2007" "" ""
+.TH "TSKMOUNT" "8" "19 août 2007" "" ""
 
 .SH NAME
 tskmount \- mounting the deleted files filesystem
 .SH SYNOPSIS
 
-\fBtskmount\fR [ \fB-h\fR ] [ \fB-f\fR ] [ \fB-d\fR ] [ \fB-q\fR ] [ \fB-v\fR ] \fBfilesystem\fR \fBmountpoint\fR
+\fBtskmount\fR [ \fB-h\fR ] [ \fB-f\fR ] [ \fB-d\fR ] [ \fB-q\fR ] [ \fB-v\fR ] [ \fB-o \fIfuseoptions\fB\fR ] \fB\fIfilesystem\fB\fR \fB\fImountpoint\fB\fR
 
 .SH "DESCRIPTION"
 .PP
@@ -33,11 +33,14 @@ Do not print status messages, at initialization.
 \fB-v, --verbose\fR
 Print status messages at initialization. "Ready" is printed when filesystem has been computed entirely and is ready to be run. This is the default.
 .TP
-\fBfilesystem\fR
+\fB-o \fIfuseoptions\fB, --options=\fIfuseoptions\fB\fR
+The argument \fIfuseoptions\fR is a list of comma separated options to pass to fuse (e.g "-o allow_other" to allow access to others).
+.TP
+\fB\fIfilesystem\fB\fR
 The device (e.g /dev/sda1) or the file (any image filesystem) to mount. It must be readable with user rights.
 .TP
-\fBmountpoint\fR
-This is an empty directory (e.g /tmp/fuse/) where to mount the filesystem.
+\fB\fImountpoint\fB\fR
+The \fImountpoint\fR is an empty directory (e.g /tmp/fuse/) where to mount the filesystem.
 .SH "EXAMPLES"
 .PP
 Here is some commands examples.
@@ -46,7 +49,7 @@ Here is some commands examples.
 Mounting device /dev/hda5 on /tmp/fuse empty directory:
 
 .nf
-				tskmount /dev/hda5 /tmp/fuse
+		tskmount /dev/hda5 /tmp/fuse
 			
 .fi
 .PP
@@ -56,7 +59,7 @@ Wait the "Ready" message before going to the mountpoint /tmp/fuse.
 Unmounting the filesystem:
 
 .nf
-				fusermount -u /tmp/fuse
+		fusermount -u /tmp/fuse
 			
 .fi
 .SS "A FULL EXAMPLE"
@@ -64,20 +67,31 @@ Unmounting the filesystem:
 Mounting device /dev/sda1 a USB pen device, to recover deleted file.
 
 .nf
-				su -c "chmod o+r /dev/sda1"      # make readable
-				mkdir /tmp/fuse                  # create mountpoint
-				tskmount /dev/sda1 /tmp/fuse &   # wait "Ready"
-				ls /tmp/fuse/                    # show content
-				cp /tmp/fuse/... .               # copy your file
-				fusermount -u /tmp/fuse          # unmount
-				su -c "chmod o-r /dev/sda1"      # reset permissions
+		su -c "chmod o+r /dev/sda1"      # make readable
+		mkdir /tmp/fuse                  # create mountpoint
+		tskmount /dev/sda1 /tmp/fuse &   # wait "Ready"
+		ls /tmp/fuse/                    # show content
+		cp /tmp/fuse/... .               # copy your file
+		fusermount -u /tmp/fuse          # unmount
+		su -c "chmod o-r /dev/sda1"      # reset permissions
+			
+.fi
+.SS "COPY A LARGE FILE"
+.PP
+Copy a large file named "/tmp/fuse/foo (deleted_12345)" using \fBicat\fR(1) command from The Sleuth Kit package.
+
+.nf
+	# at the end of the filename you can get the real inode to use
+	# as last argument of icat command
+
+		icat -r /dev/sda1 12345 >/tmp/foo_recovery
 			
 .fi
 .SH "NOTES"
 .PP
-Device or image file must be readable by the user, so you may have to do a \fBchmod\fR like "chmod o+r device" as root before if you intend to use tskmount with common user rights. And don't forget to "chmod o-r device" after unmounting :-)
+Device or image file must be readable by the user, so you may have to do a \fBchmod\fR(1) like "chmod o+r device" as root before if you intend to use tskmount with common user rights. And don't forget to "chmod o-r device" after unmounting :-)
 .PP
-Copying files is really slow and if size is more than 8 MB you shouldn't try to copy the file directly. Instead use the \fBicat\fR sleuthkit command like tskmount will show you in the alert message.
+Copying files is really slow and if size is more than 8 MB you shouldn't try to copy the file directly. Instead use the \fBicat\fR(1) sleuthkit command like tskmount will show you in the alert message.
 .PP
 Command line \fBfind\fR should be used with -noleaf option to work properly.
 .PP

@@ -11,16 +11,16 @@ tskmount - mounting the deleted files filesystem
 <H2>SYNOPSIS</H2>
 
 <P>
-<B>tskmount</B> [ <B>-h</B> ] [ <B>-f</B> ] [ <B>-d</B> ] [ <B>-q</B> ] [ <B>-v</B> ] <B>filesystem</B> <B>mountpoint</B>
+<B>tskmount</B> [ <B>-h</B> ] [ <B>-f</B> ] [ <B>-d</B> ] [ <B>-q</B> ] [ <B>-v</B> ] [ <B>-o </B><I>fuseoptions</I><B></B> ] <B></B><I>filesystem</I><B></B> <B></B><I>mountpoint</I><B></B>
 <P>
 <H2>DESCRIPTION</H2>
 
 <P>
 
-<B>tskmount</B>(8) is the command to mount the deleted files filesystem.
+<B><A HREF="tskmount.1.html">tskmount</A></B>(8) is the command to mount the deleted files filesystem.
 <P>
 
-<B>tskmount</B>(8) is part of the TSKmount-Fuse package, a Fuse filesystem written in Perl and based on The Sleuth Kit tools (commands <B>fls</B>, <B>icat</B> and <B>ils</B> are required).
+<B><A HREF="tskmount.1.html">tskmount</A></B>(8) is part of the TSKmount-Fuse package, a Fuse filesystem written in Perl and based on The Sleuth Kit tools (commands <B>fls</B>, <B>icat</B> and <B>ils</B> are required).
 <H2>OPTIONS</H2>
 
 <DL COMPACT>
@@ -34,10 +34,12 @@ Show only the deleted files. This is the default.
 Do not print status messages, at initialization.
 <DT><B>-v, --verbose</B><DD>
 Print status messages at initialization. &quot;Ready&quot; is printed when filesystem has been computed entirely and is ready to be run. This is the default.
-<DT><B>filesystem</B><DD>
+<DT><B>-o </B><I>fuseoptions</I><B>, --options=</B><I>fuseoptions</I><B></B><DD>
+The argument <I>fuseoptions</I> is a list of comma separated options to pass to fuse (e.g &quot;-o allow_other&quot; to allow access to others).
+<DT><B></B><I>filesystem</I><B></B><DD>
 The device (e.g /dev/sda1) or the file (any image filesystem) to mount. It must be readable with user rights.
-<DT><B>mountpoint</B><DD>
-This is an empty directory (e.g /tmp/fuse/) where to mount the filesystem.
+<DT><B></B><I>mountpoint</I><B></B><DD>
+The <I>mountpoint</I> is an empty directory (e.g /tmp/fuse/) where to mount the filesystem.
 </DL>
 <H2>EXAMPLES</H2>
 
@@ -51,7 +53,7 @@ Here is some commands examples.
 Mounting device /dev/hda5 on /tmp/fuse empty directory:
 <P>
 <PRE>
-                    tskmount /dev/hda5 /tmp/fuse
+                tskmount /dev/hda5 /tmp/fuse
 </PRE>
 
 <P>
@@ -64,7 +66,7 @@ Wait the &quot;Ready&quot; message before going to the mountpoint /tmp/fuse.
 Unmounting the filesystem:
 <P>
 <PRE>
-                    fusermount -u /tmp/fuse
+                fusermount -u /tmp/fuse
 </PRE>
 
 <H3>A FULL EXAMPLE</H3>
@@ -74,23 +76,36 @@ Unmounting the filesystem:
 Mounting device /dev/sda1 a USB pen device, to recover deleted file.
 <P>
 <PRE>
-                    su -c &quot;chmod o+r /dev/sda1&quot;      # make readable
-                    mkdir /tmp/fuse                  # create mountpoint
-                    tskmount /dev/sda1 /tmp/fuse &amp;   # wait &quot;Ready&quot;
-                    ls /tmp/fuse/                    # show content
-                    cp /tmp/fuse/... .               # copy your file
-                    fusermount -u /tmp/fuse          # unmount
-                    su -c &quot;chmod o-r /dev/sda1&quot;      # reset permissions
+                su -c &quot;chmod o+r /dev/sda1&quot;      # make readable
+                mkdir /tmp/fuse                  # create mountpoint
+                tskmount /dev/sda1 /tmp/fuse &amp;   # wait &quot;Ready&quot;
+                ls /tmp/fuse/                    # show content
+                cp /tmp/fuse/... .               # copy your file
+                fusermount -u /tmp/fuse          # unmount
+                su -c &quot;chmod o-r /dev/sda1&quot;      # reset permissions
+</PRE>
+
+<H3>COPY A LARGE FILE</H3>
+
+<P>
+
+Copy a large file named &quot;/tmp/fuse/foo (deleted_12345)&quot; using <B><A HREF="icat.1.html">icat</A></B>(1) command from The Sleuth Kit package.
+<P>
+<PRE>
+        # at the end of the filename you can get the real inode to use
+        # as last argument of icat command
+
+                icat -r /dev/sda1 12345 &gt;/tmp/foo_recovery                        
 </PRE>
 
 <H2>NOTES</H2>
 
 <P>
 
-Device or image file must be readable by the user, so you may have to do a <B>chmod</B> like &quot;chmod o+r device&quot; as root before if you intend to use tskmount with common user rights. And don't forget to &quot;chmod o-r device&quot; after unmounting :-)
+Device or image file must be readable by the user, so you may have to do a <B><U>chmod</U></B>(1) like &quot;chmod o+r device&quot; as root before if you intend to use tskmount with common user rights. And don't forget to &quot;chmod o-r device&quot; after unmounting :-)
 <P>
 
-Copying files is really slow and if size is more than 8 MB you shouldn't try to copy the file directly. Instead use the <B>icat</B> sleuthkit command like tskmount will show you in the alert message.
+Copying files is really slow and if size is more than 8 MB you shouldn't try to copy the file directly. Instead use the <B><A HREF="icat.1.html">icat</A></B>(1) sleuthkit command like tskmount will show you in the alert message.
 <P>
 
 Command line <B>find</B> should be used with -noleaf option to work properly.
@@ -116,19 +131,19 @@ Jean Diraison
 
 <P>
 
-<B>tskmount</B>(8) is part of TSKmount-Fuse package, a Fuse filesystem written in perl and based on The Sleuth Kit tools. It is intended to provide an easy way to recover deleted files over ext2, vfat (FAT 12/16/32) and NTFS filesystems. Latest version can be downloaded at <A HREF="http://tskmount-fuse.sourceforge.net/">http://tskmount-fuse.sourceforge.net/</A>.
+<B><A HREF="tskmount.1.html">tskmount</A></B>(8) is part of TSKmount-Fuse package, a Fuse filesystem written in perl and based on The Sleuth Kit tools. It is intended to provide an easy way to recover deleted files over ext2, vfat (FAT 12/16/32) and NTFS filesystems. Latest version can be downloaded at <A HREF="http://tskmount-fuse.sourceforge.net/">http://tskmount-fuse.sourceforge.net/</A>.
 <H2>COPYRIGHT</H2>
 
 <P>
 
-Copyright &copy; 2007 Jean Diraison. There is NO warranty. You may redistribute this software under the terms of the GNU General Public License version 2. For more information about these matters, see the files named <A HREF="COPYING">COPYING</A>.
+Copyright © 2007 Jean Diraison. There is NO warranty. You may redistribute this software under the terms of the GNU General Public License version 2. For more information about these matters, see the files named COPYING.
 <H2>SEE ALSO</H2>
 
 <P>
 
-<B>fusermount</B>(1),
-<B>icat</B>(1),
-<B>fls</B>(1).
+<B><A HREF="fusermount.1.html">fusermount</A></B>(1),
+<B><A HREF="icat.1.html">icat</A></B>(1),
+<B><A HREF="fls.1.html">fls</A></B>(1).
 <P>
 
 </BODY>

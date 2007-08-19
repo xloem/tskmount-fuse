@@ -176,7 +176,7 @@ $Id$
 			Copying files is really slow and if size is more than 8 MB you shouldn't try to copy the file directly. Instead use the <command>icat</command>(1) sleuthkit command like tskmount will show you in the alert message.
 		</para>
 		<para>
-			Command line <command>find</command> should be used with <emphasis>-noleaf</emphasis> option to work properly.
+			Command line <command>find</command>(1) should be used with <emphasis>-noleaf</emphasis> option to work properly.
 		</para>
 		<para>
 			Mounted filesystem is readonly.

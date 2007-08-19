@@ -28,6 +28,15 @@ license version 2.
 		make install-docs
 
 
+Building Package:
+=================
+    To build a binary RPM package, type:
+
+		rpm -tb --clean tskmount-fuse-0.02.tar.gz
+	or
+		rpmbuild -tb --clean tskmount-fuse-0.02.tar.gz
+
+
 Usage:
 ======
    Mounting device /dev/hda5 on /tmp/fuse empty directory:

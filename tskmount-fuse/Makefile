@@ -30,7 +30,9 @@ install: tskmount docs/man/tskmount.8
 
 install-docs: docs/html/tskmount.8.html
 	install -d $(DESTDIR)$(DATADIR)/doc/$(PROGNAME)-$(VERSION)
+	install -m 0644 README $(DESTDIR)$(DATADIR)/doc/$(PROGNAME)-$(VERSION)/
 	install -m 0644 COPYING $(DESTDIR)$(DATADIR)/doc/$(PROGNAME)-$(VERSION)/
+	install -m 0644 ChangeLog $(DESTDIR)$(DATADIR)/doc/$(PROGNAME)-$(VERSION)/
 	install -m 0644 docs/html/tskmount.8.html $(DESTDIR)$(DATADIR)/doc/$(PROGNAME)-$(VERSION)/
 
 uninstall-all:	uninstall uninstall-docs

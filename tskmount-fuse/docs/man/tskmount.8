@@ -3,13 +3,13 @@
 .\" <http://shell.ipoline.com/~elmert/comp/docbook2X/> 
 .\" Please send any bug reports, improvements, comments, patches, 
 .\" etc. to Steve Cheng <steve@ggi-project.org>.
-.TH "TSKMOUNT" "8" "19 août 2007" "" ""
+.TH "TSKMOUNT" "8" "20 août 2007" "" ""
 
 .SH NAME
 tskmount \- mounting the deleted files filesystem
 .SH SYNOPSIS
 
-\fBtskmount\fR [ \fB-h\fR ] [ \fB-f\fR ] [ \fB-d\fR ] [ \fB-q\fR ] [ \fB-v\fR ] [ \fB-o \fIfuseoptions\fB\fR ] \fB\fIfilesystem\fB\fR \fB\fImountpoint\fB\fR
+\fBtskmount\fR [ \fB-h\fR ] [ \fB-f\fR ] [ \fB-d\fR ] [ \fB-e\fR ] [ \fB-q\fR ] [ \fB-v\fR ] [ \fB-o \fIfuseoptions\fB\fR ] \fB\fIfilesystem\fB\fR \fB\fImountpoint\fB\fR
 
 .SH "DESCRIPTION"
 .PP
@@ -22,10 +22,13 @@ tskmount \- mounting the deleted files filesystem
 Print a help message.
 .TP
 \fB-f, --full\fR
-Show all files in the mounted filesystem (deleted and not deleted). Mounting with this option may takes a long time and requires some memory during filesystem analysis at initialization.
+Show all files in the mounted filesystem (deleted and not deleted ones). Mounting with this option may takes a long time (minutes) and requires some memory during filesystem analysis at initialization.
 .TP
 \fB-d, --deleted\fR
-Show only the deleted files. This is the default.
+Show only the deleted files. This is the default. Note that this option may show only a part of all the deleted files (see \fB-e, --enhance\fR option).
+.TP
+\fB-e, --enhance\fR
+Enhance deleted files search, this option is necessary to show all deleted files on ext2 filesystem, but increase memory usage and time at startup. This is the default if option \fB-f, --full\fR is set.
 .TP
 \fB-q, --quiet\fR
 Do not print status messages, at initialization.
@@ -67,13 +70,13 @@ Unmounting the filesystem:
 Mounting device /dev/sda1 a USB pen device, to recover deleted file.
 
 .nf
-		su -c "chmod o+r /dev/sda1"      # make readable
-		mkdir /tmp/fuse                  # create mountpoint
-		tskmount /dev/sda1 /tmp/fuse &   # wait "Ready"
-		ls /tmp/fuse/                    # show content
-		cp /tmp/fuse/... .               # copy your file
-		fusermount -u /tmp/fuse          # unmount
-		su -c "chmod o-r /dev/sda1"      # reset permissions
+		su -c "chmod o+r /dev/sda1"         # make readable
+		mkdir /tmp/fuse                     # create mountpoint
+		tskmount -f /dev/sda1 /tmp/fuse &   # wait "Ready"
+		ls /tmp/fuse/                       # show content
+		cp /tmp/fuse/... .                  # copy your file
+		fusermount -u /tmp/fuse             # unmount
+		su -c "chmod o-r /dev/sda1"         # reset permissions
 			
 .fi
 .SS "COPY A LARGE FILE"

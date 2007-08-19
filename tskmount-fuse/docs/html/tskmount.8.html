@@ -2,19 +2,17 @@
 <!--
 $Id$
 -->
-<HTML>
-<HEAD>
+<HTML><HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <TITLE>Manpage of TSKMOUNT</TITLE>
-</HEAD>
-<BODY>
+</HEAD><BODY>
 <H2>NAME</H2>
 
 tskmount - mounting the deleted files filesystem
 <H2>SYNOPSIS</H2>
 
 <P>
-<B>tskmount</B> [ <B>-h</B> ] [ <B>-f</B> ] [ <B>-d</B> ] [ <B>-q</B> ] [ <B>-v</B> ] [ <B>-o </B><I>fuseoptions</I><B></B> ] <B></B><I>filesystem</I><B></B> <B></B><I>mountpoint</I><B></B>
+<B>tskmount</B> [ <B>-h</B> ] [ <B>-f</B> ] [ <B>-d</B> ] [ <B>-e</B> ] [ <B>-q</B> ] [ <B>-v</B> ] [ <B>-o </B><I>fuseoptions</I><B></B> ] <B></B><I>filesystem</I><B></B> <B></B><I>mountpoint</I><B></B>
 <P>
 <H2>DESCRIPTION</H2>
 
@@ -30,9 +28,11 @@ tskmount - mounting the deleted files filesystem
 <DT><B>-h, --help</B><DD>
 Print a help message.
 <DT><B>-f, --full</B><DD>
-Show all files in the mounted filesystem (deleted and not deleted). Mounting with this option may takes a long time and requires some memory during filesystem analysis at initialization.
+Show all files in the mounted filesystem (deleted and not deleted ones). Mounting with this option may takes a long time (minutes) and requires some memory during filesystem analysis at initialization.
 <DT><B>-d, --deleted</B><DD>
-Show only the deleted files. This is the default.
+Show only the deleted files. This is the default. Note that this option may show only a part of all the deleted files (see <B>-e, --enhance</B> option).
+<DT><B>-e, --enhance</B><DD>
+Enhance deleted files search, this option is necessary to show all deleted files on ext2 filesystem, but increase memory usage and time at startup. This is the default if option <B>-f, --full</B> is set.
 <DT><B>-q, --quiet</B><DD>
 Do not print status messages, at initialization.
 <DT><B>-v, --verbose</B><DD>
@@ -79,13 +79,13 @@ Unmounting the filesystem:
 Mounting device /dev/sda1 a USB pen device, to recover deleted file.
 <P>
 <PRE>
-                su -c &quot;chmod o+r /dev/sda1&quot;      # make readable
-                mkdir /tmp/fuse                  # create mountpoint
-                tskmount /dev/sda1 /tmp/fuse &amp;   # wait &quot;Ready&quot;
-                ls /tmp/fuse/                    # show content
-                cp /tmp/fuse/... .               # copy your file
-                fusermount -u /tmp/fuse          # unmount
-                su -c &quot;chmod o-r /dev/sda1&quot;      # reset permissions
+                su -c &quot;chmod o+r /dev/sda1&quot;         # make readable
+                mkdir /tmp/fuse                     # create mountpoint
+                tskmount -f /dev/sda1 /tmp/fuse &amp;   # wait &quot;Ready&quot;
+                ls /tmp/fuse/                       # show content
+                cp /tmp/fuse/... .                  # copy your file
+                fusermount -u /tmp/fuse             # unmount
+                su -c &quot;chmod o-r /dev/sda1&quot;         # reset permissions
 </PRE>
 
 <H3>COPY A LARGE FILE</H3>
@@ -98,7 +98,7 @@ Copy a large file named &quot;/tmp/fuse/foo (deleted_12345)&quot; using <B><A HR
         # at the end of the filename you can get the real inode to use
         # as last argument of icat command
 
-                icat -r /dev/sda1 12345 &gt;/tmp/foo_recovery                        
+                icat -r /dev/sda1 12345 &gt;/tmp/foo_recovery
 </PRE>
 
 <H2>NOTES</H2>
@@ -139,7 +139,7 @@ Jean Diraison
 
 <P>
 
-Copyright © 2007 Jean Diraison. There is NO warranty. You may redistribute this software under the terms of the GNU General Public License version 2. For more information about these matters, see the files named <A HREF="COPYING">COPYING</A>.
+Copyright &copy; 2007 Jean Diraison. There is NO warranty. You may redistribute this software under the terms of the GNU General Public License version 2. For more information about these matters, see the files named <A HREF="COPYING">COPYING</A>.
 <H2>SEE ALSO</H2>
 
 <P>

@@ -19,6 +19,7 @@ $Id$
 			<arg choice="opt">-h</arg>
 			<arg choice="opt">-f</arg>
 			<arg choice="opt">-d</arg>
+			<arg choice="opt">-e</arg>
 			<arg choice="opt">-q</arg>
 			<arg choice="opt">-v</arg>
 			<arg choice="opt">-o <replaceable>fuseoptions</replaceable></arg>
@@ -50,7 +51,7 @@ $Id$
 				<term>-f, --full</term>
 				<listitem>
 					<para>
-						Show all files in the mounted filesystem (deleted and not deleted). Mounting with this option may takes a long time and requires some memory during filesystem analysis at initialization.
+						Show all files in the mounted filesystem (deleted and not deleted ones). Mounting with this option may takes a long time (minutes) and requires some memory during filesystem analysis at initialization.
 					</para>
 				</listitem>
 			</varlistentry>
@@ -58,7 +59,15 @@ $Id$
 				<term>-d, --deleted</term>
 				<listitem>
 					<para>
-						Show only the deleted files. This is the default.
+						Show only the deleted files. This is the default. Note that this option may show only a part of all the deleted files (see <emphasis>-e, --enhance</emphasis> option).
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>-e, --enhance</term>
+				<listitem>
+					<para>
+						Enhance deleted files search, this option is necessary to show all deleted files on ext2 filesystem, but increase memory usage and time at startup. This is the default if option <emphasis>-f, --full</emphasis> is set.
 					</para>
 				</listitem>
 			</varlistentry>
@@ -136,13 +145,13 @@ $Id$
 				Mounting device /dev/sda1 a USB pen device, to recover deleted file.
 			</para>
 			<programlisting>
-		su -c "chmod o+r /dev/sda1"      # make readable
-		mkdir /tmp/fuse                  # create mountpoint
-		tskmount /dev/sda1 /tmp/fuse &   # wait "Ready"
-		ls /tmp/fuse/                    # show content
-		cp /tmp/fuse/... .               # copy your file
-		fusermount -u /tmp/fuse          # unmount
-		su -c "chmod o-r /dev/sda1"      # reset permissions
+		su -c "chmod o+r /dev/sda1"         # make readable
+		mkdir /tmp/fuse                     # create mountpoint
+		tskmount -f /dev/sda1 /tmp/fuse &   # wait "Ready"
+		ls /tmp/fuse/                       # show content
+		cp /tmp/fuse/... .                  # copy your file
+		fusermount -u /tmp/fuse             # unmount
+		su -c "chmod o-r /dev/sda1"         # reset permissions
 			</programlisting>
 		</example>
 		<example>

@@ -11,7 +11,7 @@ it under the terms of GNU GPL version 2 license.
 
 Requirements:
 =============
-    * Perl-Fuse  <http://search.cpan.org/dist/Fuse/Fuse.pm>
+    * perl-Fuse  <http://search.cpan.org/dist/Fuse/Fuse.pm>
     * Fuse (filesystem in a userspace)  <http://fuse.sourceforge.net/>
     * The Sleuth Kit  <http://www.sleuthkit.org/sleuthkit/>
 

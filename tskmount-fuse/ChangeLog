@@ -3,9 +3,9 @@
 	version 0.02
 
 	* Add enhance option to improve deleted files search.
-	* Improve inodes management.
 	* Add option to pass arguments to Fuse.
-	* Add some documentation (man, html and sgml).
+	* Improve inodes management.
+	* Add documentation in man, html and sgml format.
 	* Add Makefile and Spec file to install and build RPM package.
 
 

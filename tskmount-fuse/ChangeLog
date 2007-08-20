@@ -1,11 +1,17 @@
 2007-08-19  Jean Diraison <jean.diraison@ac-versailles.fr>
+
+	version 0.02
+
 	* Add enhance option to improve deleted files search.
 	* Improve inodes management.
 	* Add option to pass arguments to Fuse.
 	* Add some documentation (man, html and sgml).
 	* Add Makefile and Spec file to install and build RPM package.
-	* new release (version 0.02)
+
 
 2007-08-13  Jean Diraison <jean.diraison@ac-versailles.fr>
-	* first release (version 0.01)
+
+	version 0.01
+	
+	* first release
 

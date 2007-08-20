@@ -9,7 +9,7 @@ PROGNAME=tskmount
 VERSION=0.03
 
 
-all:
+all: docs
 
 docs: docs/man/tskmount.8 docs/html/tskmount.8.html
 

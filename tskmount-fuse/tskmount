@@ -2,8 +2,8 @@
 # tskmount, is a Fuse filesystem based on The Sleuth Kit tools
 # $Id$
 # Author:  Jean Diraison <jean.diraison@ac-versailles.fr>, <jean.diraison@ac-rennes.fr>
-# Date:    Mon, 13 Aug 2007 23:39:53 +0200
-# Version: 0.01
+# Date:    Mon, 20 Aug 2007 22:17:44 +0200
+# Version: 0.03
 # License: GPLv2
 # Purpose: it tries to provide an easy way to recover removed
 #          files over ext2, fat and ntfs filesystems

@@ -1,14 +1,14 @@
 #!/usr/bin/perl -w
-# tskmount, is a Fuse filesystem based on The Sleuth Kit tools
 # $Id$
+# 
+# TSKmount-Fuse is a Fuse filesystem based on The Sleuth Kit tools
 # Author:  Jean Diraison <jean.diraison@ac-versailles.fr>, <jean.diraison@ac-rennes.fr>
-# Date:    Mon, 20 Aug 2007 22:17:44 +0200
-# Version: 0.03
+# Version: 0.04
 # License: GPLv2
 # Purpose: it tries to provide an easy way to recover removed
 #          files over ext2, fat and ntfs filesystems
 # Notes:   it is long to init and copying files is really slow
-# Requires:  Perl, Fuse, perl-Fuse, sleuthkit
+# Requires:  perl-Fuse, sleuthkit
 
 use strict;
 use Getopt::Long;
@@ -222,7 +222,7 @@ if ((@ARGV != 2) || ($option_help == 1)) {
 	my $progname = $0;
 	$progname =~ s=.*/==g;
 	print "A Fuse filesystem based on The Sleuth Kit (http://www.sleuthkit.org/)\n";
-	print "usage: $progname [-fdevqh] [-o fuseoptions] filesystem mountpoint\n";
+	print "usage: $progname [-h] [-f] [-d] [-e] [-q] [-v] [-o fuseoptions] filesystem mountpoint\n";
 	print "\t\tfilesystem      a readable device (/dev/hda1) or image file (fs.bin)\n";
 	print "\t\tmountpoint      an empty directory where to mount\n";
 	print "\t\t-f, --full      show all files (slow)\n";

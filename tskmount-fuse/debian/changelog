@@ -1,6 +1,6 @@
 tskmount-fuse (0.03-1) unstable; urgency=low
 
-  * Add debian package creation capacity.
+  * Add debian package creation files.
 
  -- Jean Diraison <jean.diraison@ac-versailles.fr>  Mon, 20 Aug 2007 14:46:05 +0200
 

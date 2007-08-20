@@ -46,7 +46,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %changelog
 * Mon Aug 20 2007 Jean Diraison <jean.diraison@ac-versailles.fr>
-- add debian package creation capacity
+- add debian package creation files
 - release 0.03
 
 * Sun Aug 19 2007 Jean Diraison <jean.diraison@ac-versailles.fr>

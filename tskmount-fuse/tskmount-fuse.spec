@@ -1,5 +1,5 @@
 %define name     tskmount-fuse
-%define version  0.02
+%define version  0.03
 %define release  %mkrel 1
 
 Summary: TSKmount-Fuse filesystem to recover deleted files
@@ -45,10 +45,14 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man8/tskmount.8*
 
 %changelog
+* Mon Aug 20 2007 Jean Diraison <jean.diraison@ac-versailles.fr>
+- add debian package creation capacity
+- release 0.03
+
 * Sun Aug 19 2007 Jean Diraison <jean.diraison@ac-versailles.fr>
 - add enhance option to improve deleted files search
-- improve inodes management
 - add option to pass arguments to Fuse
+- improve inodes management
 - add some documentation (man, html, smgl)
 - release 0.02
 

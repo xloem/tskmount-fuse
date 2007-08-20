@@ -1,0 +1,21 @@
+tskmount-fuse (0.03-1) unstable; urgency=low
+
+  * Add debian package creation capacity.
+
+ -- Jean Diraison <jean.diraison@ac-versailles.fr>  Mon, 20 Aug 2007 14:46:05 +0200
+
+tskmount-fuse (0.02-1) unstable; urgency=low
+
+  * Add enhance option to improve deleted files search.
+  * Add option to pass arguments to Fuse.
+  * Improve inodes management.
+  * Add documentation in man, html and sgml format.
+  * Add Makefile and Spec file to install and build RPM package.
+
+ -- Jean Diraison <jean.diraison@ac-versailles.fr>  Mon, 20 Aug 2007 12:34:49 +0200
+
+tskmount-fuse (0.01-1) unstable; urgency=low
+
+  * First Release.
+
+ -- Jean Diraison <jean.diraison@ac-versailles.fr>  Tue, 14 Aug 2007 13:00:14 +0200

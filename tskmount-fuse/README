@@ -16,6 +16,7 @@ Requirements:
     * The Sleuth Kit  <http://www.sleuthkit.org/sleuthkit/>
 
     Debian packages: libfuse-perl, fuse-utils, libfuse2, sleuthkit
+    Mandriva packages: perl-Fuse, fuse, sleuthkit
 
 
 Install:
@@ -30,11 +31,18 @@ license version 2.
 
 Building Package:
 =================
+    To build a binary Debian package, type:
+
+		tar -xzf tskmount-fuse-0.03.tar.gz
+		cd tskmount-fuse-0.03
+		dpkg-buildpackage -rfakeroot
+
+
     To build a binary RPM package, type:
 
-		rpm -tb --clean tskmount-fuse-0.02.tar.gz
+		rpm -tb --clean tskmount-fuse-0.03.tar.gz
 	or
-		rpmbuild -tb --clean tskmount-fuse-0.02.tar.gz
+		rpmbuild -tb --clean tskmount-fuse-0.03.tar.gz
 
 
 Usage:
@@ -73,7 +81,7 @@ Copyrights:
 ===========
 Author: Jean Diraison <jean.diraison@ac-versailles.fr>,
 		      <jean.diraison@ac-rennes.fr>
-Release: TSKmount-Fuse-0.02
-Copyright date: 19 Aug 2007
+Release: TSKmount-Fuse-0.03
+Copyright date: 20 Aug 2007
 License: GPLv2 (see the COPYING file content)
 

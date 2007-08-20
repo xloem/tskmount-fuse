@@ -6,7 +6,7 @@ MANDIR=/usr/share/man
 DATADIR=/usr/share
 
 PROGNAME=tskmount
-VERSION=0.02
+VERSION=0.03
 
 
 all: docs

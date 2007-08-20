@@ -220,7 +220,7 @@ my $options = GetOptions("f|full" => \$option_full,
 
 if ((@ARGV != 2) || ($option_help == 1)) {
 	my $progname = $0;
-	$progname =~ s=./==g;
+	$progname =~ s=.*/==g;
 	print "A Fuse filesystem based on The Sleuth Kit (http://www.sleuthkit.org/)\n";
 	print "usage: $progname [-fdevqh] [-o fuseoptions] filesystem mountpoint\n";
 	print "\t\tfilesystem      a readable device (/dev/hda1) or image file (fs.bin)\n";

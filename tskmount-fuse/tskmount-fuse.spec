@@ -11,6 +11,7 @@ Group:   File tools
 URL:     http://tskmount-fuse.sourceforge.net/
 Source:  http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Packager:  Jean Diraison <jean.diraison@ac-versailles.fr>
+BuildArch: noarch
 Requires:  perl-Fuse, sleuthkit
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 

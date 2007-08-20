@@ -33,7 +33,7 @@ $Id$
 			<command>tskmount</command>(8) is the command to mount the deleted files filesystem.
 		</para>
 		<para>
-			<command>tskmount</command>(8) is part of the TSKmount-Fuse package, a Fuse filesystem written in Perl and based on The Sleuth Kit tools (commands <command>fls</command>, <command>icat</command> and <command>ils</command> are required).
+			<command>tskmount</command>(8) is part of the TSKmount-Fuse package, a Fuse filesystem written in Perl and based on The Sleuth Kit tools (commands <command>fls</command>(1), <command>icat</command>(1) and <command>ils</command>(1) are required).
 		</para>
 	</refsect1>
 	<refsect1>
@@ -221,7 +221,8 @@ $Id$
 		<para>
 			<command>fusermount</command>(1),
 			<command>icat</command>(1),
-			<command>fls</command>(1).
+			<command>fls</command>(1),
+			<command>ils</command>(1).
 		</para>
 	</refsect1>
 </refentry>

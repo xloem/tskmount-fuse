@@ -145,7 +145,10 @@ sub init_fls {
 	my $OPT_FLS = $_[0] || "";
 	open(FLSDAT, "-|", "$CMD_FLS $OPT_FLS -r -a -m / '$FILESYSTEM'") or die "Can't open fls output data file !";
 	while (my $item = <FLSDAT>) {
-		$item =~ m/^\d\|(.*)\|\d\|([\d\-]+)\|\d+\|[dlbcp\-]\/[rwxstSTdlbcp\-]{10}\|(\d+)\|/;
+		# legacy
+		#$item =~ m/^\d\|(.*)\|\d\|([\d\-]+)\|\d+\|[dlbcp\-]\/[rwxstSTdlbcp\-]{10}\|(\d+)\|/;
+		# TSK 4.10.1, inode immediately follows filename
+		$item =~ m/^\d\|(.*)\|([\d\-]+)\|[rwxstSTdlbcp\-\/]{12}\|\d+\|\d+\|(\d+)\|/;
 		my ($filename, $inode, $nlink) = ($1, $2, $3);
 		if ($nlink == 0) {
 			$filename =~ s/\(deleted\)$/\(deleted_$inode\)/;
